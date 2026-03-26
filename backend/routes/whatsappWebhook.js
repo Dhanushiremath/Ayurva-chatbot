@@ -49,6 +49,11 @@ router.post('/webhook', async (req, res) => {
 
     console.log(`✅ Response via ${usedService} sent successfully`);
 
+    // Truncate response if too long for WhatsApp (1600 char limit)
+    if (responseMessage.length > 1500) {
+      responseMessage = responseMessage.substring(0, 1500) + '...\n\nFor complete information, please visit: https://ayurva-chatbot.vercel.app';
+    }
+
     // Send response back via WhatsApp
     await twilioService.sendWhatsApp(phoneNumber, responseMessage);
     
@@ -102,6 +107,11 @@ router.post('/incoming', async (req, res) => {
     }
 
     console.log(`✅ Response via ${usedService} sent successfully`);
+
+    // Truncate response if too long for WhatsApp (1600 char limit)
+    if (responseMessage.length > 1500) {
+      responseMessage = responseMessage.substring(0, 1500) + '...\n\nFor complete information, please visit: https://ayurva-chatbot.vercel.app';
+    }
 
     // Send response back via WhatsApp
     await twilioService.sendWhatsApp(phoneNumber, responseMessage);
