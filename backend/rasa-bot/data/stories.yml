@@ -1,0 +1,29 @@
+version: "3.1"
+
+stories:
+  - story: greet and consultation
+    steps:
+      - intent: greet
+      - action: utter_greet
+      - intent: symptom_report
+      - action: action_check_symptoms
+
+  - story: direct consultation
+    steps:
+      - intent: symptom_report
+      - action: action_check_symptoms
+
+  - story: medical inquiry
+    steps:
+      - intent: condition_inquiry
+      - action: action_get_disease_info
+
+  - story: medicine inquiry
+    steps:
+      - intent: medicine_question
+      - action: action_provide_health_advice
+
+  - story: prevention advice
+    steps:
+      - intent: prevention_advice
+      - action: action_provide_health_advice

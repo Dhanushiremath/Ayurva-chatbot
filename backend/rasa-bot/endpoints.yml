@@ -1,0 +1,11 @@
+action_endpoint:
+  url: "http://localhost:5055/webhook"
+
+# Uncomment to use a tracker store
+# tracker_store:
+#   type: sql
+#   dialect: "postgresql"
+#   url: "postgresql://localhost/rasa"
+#   db: "rasa"
+#   username: "postgres"
+#   password: "password"

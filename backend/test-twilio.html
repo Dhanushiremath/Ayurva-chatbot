@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Twilio SMS - HealthGuard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 10px;
+            display: none;
+        }
+        .result.success {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+        }
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+        }
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .result-message {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .note {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #856404;
+        }
+        .note strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Test Twilio WhatsApp</h1>
+        <p class="subtitle">Send a test WhatsApp message using HealthGuard</p>
+        
+        <div class="note">
+            <strong>⚠️ WhatsApp Sandbox Setup Required:</strong>
+            Before testing, you need to join the Twilio WhatsApp Sandbox:
+            <ol style="margin-top: 8px; margin-left: 20px;">
+                <li>Go to <a href="https://console.twilio.com/us1/develop/sms/try-it-out/whatsapp-learn" target="_blank">Twilio WhatsApp Sandbox</a></li>
+                <li>Send the join code (e.g., "join [code]") to the sandbox number from your WhatsApp</li>
+                <li>Wait for confirmation message</li>
+                <li>Then test below!</li>
+            </ol>
+            <br>
+            <strong>📱 Phone Number Formats:</strong>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>India: +91 followed by 10 digits (e.g., +919876543210)</li>
+                <li>USA: +1 followed by 10 digits (e.g., +12345678901)</li>
+            </ul>
+        </div>
+
+        <div style="background: #e3f2fd; border: 2px solid #90caf9; padding: 12px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; color: #0d47a1;">
+            <strong>💡 Tip:</strong> WhatsApp is free and works great in India! SMS might have delivery issues or extra costs.
+        </div>
+
+        <form id="whatsappForm">
+            <div class="form-group">
+                <label for="country">Country</label>
+                <select id="country" style="width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 15px;">
+                    <option value="+91">🇮🇳 India (+91)</option>
+                    <option value="+1">🇺🇸 USA (+1)</option>
+                    <option value="+44">🇬🇧 UK (+44)</option>
+                    <option value="+61">🇦🇺 Australia (+61)</option>
+                    <option value="+971">🇦🇪 UAE (+971)</option>
+                    <option value="+65">🇸🇬 Singapore (+65)</option>
+                    <option value="">Other (enter full number with +)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <div style="display: flex; gap: 10px;">
+                    <input 
+                        type="text" 
+                        id="countryCode" 
+                        value="+91" 
+                        readonly
+                        style="width: 80px; background: #f5f5f5; text-align: center; font-weight: 600;"
+                    >
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        placeholder="9876543210" 
+                        required
+                        style="flex: 1;"
+                    >
+                </div>
+                <small style="color: #666; font-size: 12px;">Enter your 10-digit mobile number (without country code)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea 
+                    id="message" 
+                    placeholder="Enter your test message..."
+                >Hello! This is a test WhatsApp message from HealthGuard. Your health assistant is ready to help you! 🏥</textarea>
+            </div>
+
+            <button type="submit" id="sendBtn">
+                � Send WhatsApp Message
+            </button>
+        </form>
+
+        <div style="margin-top: 20px; padding: 12px; background: #f5f5f5; border-radius: 10px; font-size: 13px;">
+            <strong>🔄 Want to test SMS instead?</strong>
+            <button onclick="switchToSMS()" style="margin-left: 10px; padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">
+                Switch to SMS
+            </button>
+        </div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('whatsappForm');
+        const resultDiv = document.getElementById('result');
+        const sendBtn = document.getElementById('sendBtn');
+        const countrySelect = document.getElementById('country');
+        const countryCodeInput = document.getElementById('countryCode');
+        const phoneInput = document.getElementById('phone');
+
+        let isWhatsApp = true; // Default to WhatsApp
+
+        // Update country code display when country changes
+        countrySelect.addEventListener('change', (e) => {
+            const code = e.target.value;
+            if (code) {
+                countryCodeInput.value = code;
+                countryCodeInput.readOnly = true;
+                countryCodeInput.style.background = '#f5f5f5';
+            } else {
+                countryCodeInput.value = '+';
+                countryCodeInput.readOnly = false;
+                countryCodeInput.style.background = 'white';
+            }
+            
+            // Update placeholder based on country
+            const placeholders = {
+                '+91': '9876543210',
+                '+1': '2345678901',
+                '+44': '7911123456',
+                '+61': '412345678',
+                '+971': '501234567',
+                '+65': '81234567'
+            };
+            phoneInput.placeholder = placeholders[code] || 'Enter phone number';
+        });
+
+        function switchToSMS() {
+            isWhatsApp = false;
+            document.querySelector('h1').textContent = '🏥 Test Twilio SMS';
+            sendBtn.innerHTML = '📱 Send SMS';
+            document.querySelector('.subtitle').textContent = 'Send a test SMS message using HealthGuard';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const countryCode = countryCodeInput.value;
+            const phoneNumber = phoneInput.value.replace(/\s/g, ''); // Remove spaces
+            const fullPhone = countryCode + phoneNumber;
+            const message = document.getElementById('message').value;
+
+            // Validate phone number
+            if (!fullPhone.startsWith('+')) {
+                showResult('error', 'Invalid Format ❌', 'Phone number must start with country code (+)');
+                return;
+            }
+
+            // Disable button and show loading
+            sendBtn.disabled = true;
+            sendBtn.textContent = isWhatsApp ? '💬 Sending WhatsApp...' : '📤 Sending SMS...';
+            resultDiv.style.display = 'none';
+
+            try {
+                const endpoint = isWhatsApp ? '/api/test/whatsapp' : '/api/test/sms';
+                const response = await fetch(`http://localhost:5000${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ phone: fullPhone, message })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const messageType = isWhatsApp ? 'WhatsApp Message' : 'SMS';
+                    showResult('success', `${messageType} Sent Successfully! ✅`, 
+                        `Message sent to ${data.sentTo}<br>Message SID: ${data.messageSid}<br><br>Check your ${isWhatsApp ? 'WhatsApp' : 'phone'} for the message!`);
+                } else {
+                    const tips = isWhatsApp 
+                        ? '<br><br>💡 Tips:<br>1. Make sure you joined the WhatsApp Sandbox<br>2. Send "join [code]" to the sandbox number first<br>3. Wait for confirmation before testing'
+                        : '<br><br>💡 Tip: Make sure this number is verified in your Twilio Console if using a trial account.';
+                    
+                    showResult('error', `Failed to Send ${isWhatsApp ? 'WhatsApp' : 'SMS'} ❌`, 
+                        `Error: ${data.error}<br>Details: ${data.details || 'Unknown error'}${tips}`);
+                }
+            } catch (error) {
+                showResult('error', 'Connection Error ❌', 
+                    `Could not connect to server. Make sure the backend is running on port 5000.<br><br>Error: ${error.message}`);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = isWhatsApp ? '💬 Send WhatsApp Message' : '📱 Send SMS';
+            }
+        });
+
+        function showResult(type, title, message) {
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = `
+                <div class="result-title">${title}</div>
+                <div class="result-message">${message}</div>
+            `;
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

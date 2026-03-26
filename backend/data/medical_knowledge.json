@@ -1,0 +1,206 @@
+{
+  "symptoms": {
+    "fever": {
+      "description": "Elevated body temperature above 100.4°F (38°C)",
+      "common_causes": ["Viral infection", "Bacterial infection", "Heat exhaustion", "Inflammatory conditions"],
+      "severity": "mild_to_moderate",
+      "advice": "Rest, stay hydrated, take paracetamol if needed. Consult doctor if fever persists beyond 3 days or exceeds 103°F.",
+      "related_symptoms": ["headache", "body_ache", "chills", "fatigue"]
+    },
+    "headache": {
+      "description": "Pain or discomfort in the head or neck region",
+      "common_causes": ["Tension", "Dehydration", "Lack of sleep", "Eye strain", "Migraine"],
+      "severity": "mild",
+      "advice": "Rest in a quiet, dark room. Stay hydrated. Apply cold compress. Take pain reliever if needed. Consult doctor if severe or persistent.",
+      "related_symptoms": ["fever", "nausea", "sensitivity_to_light"]
+    },
+    "cough": {
+      "description": "Reflex action to clear airways",
+      "common_causes": ["Common cold", "Allergies", "Asthma", "Acid reflux", "Smoking"],
+      "severity": "mild",
+      "advice": "Stay hydrated, use honey for soothing, avoid irritants. Consult doctor if cough persists beyond 3 weeks or has blood.",
+      "related_symptoms": ["fever", "sore_throat", "chest_pain", "shortness_of_breath"]
+    },
+    "sore_throat": {
+      "description": "Pain or irritation in the throat",
+      "common_causes": ["Viral infection", "Bacterial infection (strep)", "Allergies", "Dry air"],
+      "severity": "mild",
+      "advice": "Gargle with warm salt water, stay hydrated, use throat lozenges. Consult doctor if severe pain or difficulty swallowing.",
+      "related_symptoms": ["fever", "cough", "swollen_glands", "difficulty_swallowing"]
+    },
+    "stomach_pain": {
+      "description": "Discomfort or pain in the abdominal area",
+      "common_causes": ["Indigestion", "Gas", "Constipation", "Food poisoning", "Gastritis"],
+      "severity": "mild_to_moderate",
+      "advice": "Eat bland foods, stay hydrated, avoid spicy/fatty foods. Consult doctor if severe pain, vomiting, or blood in stool.",
+      "related_symptoms": ["nausea", "vomiting", "diarrhea", "bloating"]
+    },
+    "diarrhea": {
+      "description": "Loose or watery bowel movements",
+      "common_causes": ["Viral infection", "Food poisoning", "Lactose intolerance", "Medications"],
+      "severity": "mild_to_moderate",
+      "advice": "Stay hydrated with ORS, eat bland foods (BRAT diet), avoid dairy. Consult doctor if persists beyond 2 days or has blood.",
+      "related_symptoms": ["stomach_pain", "nausea", "fever", "dehydration"]
+    },
+    "nausea": {
+      "description": "Feeling of wanting to vomit",
+      "common_causes": ["Food poisoning", "Motion sickness", "Pregnancy", "Anxiety", "Medications"],
+      "severity": "mild",
+      "advice": "Eat small, bland meals. Sip ginger tea or clear fluids. Rest. Consult doctor if persistent or with severe symptoms.",
+      "related_symptoms": ["vomiting", "dizziness", "stomach_pain", "headache"]
+    },
+    "fatigue": {
+      "description": "Extreme tiredness or lack of energy",
+      "common_causes": ["Lack of sleep", "Stress", "Anemia", "Thyroid issues", "Depression"],
+      "severity": "mild",
+      "advice": "Get adequate sleep, eat balanced diet, exercise regularly, manage stress. Consult doctor if persistent despite rest.",
+      "related_symptoms": ["weakness", "dizziness", "difficulty_concentrating"]
+    },
+    "chest_pain": {
+      "description": "Pain or discomfort in the chest area",
+      "common_causes": ["Muscle strain", "Acid reflux", "Anxiety", "Heart issues"],
+      "severity": "moderate_to_severe",
+      "advice": "SEEK IMMEDIATE MEDICAL ATTENTION if severe, radiating to arm/jaw, with shortness of breath, or sweating. Could indicate heart problem.",
+      "related_symptoms": ["shortness_of_breath", "sweating", "nausea", "dizziness"]
+    },
+    "shortness_of_breath": {
+      "description": "Difficulty breathing or feeling breathless",
+      "common_causes": ["Asthma", "Anxiety", "Anemia", "Heart conditions", "Lung issues"],
+      "severity": "moderate_to_severe",
+      "advice": "Sit upright, stay calm, breathe slowly. SEEK IMMEDIATE HELP if severe, sudden, or with chest pain.",
+      "related_symptoms": ["chest_pain", "wheezing", "cough", "dizziness"]
+    },
+    "dizziness": {
+      "description": "Feeling lightheaded or unsteady",
+      "common_causes": ["Dehydration", "Low blood pressure", "Inner ear problems", "Anemia"],
+      "severity": "mild_to_moderate",
+      "advice": "Sit or lie down, stay hydrated, avoid sudden movements. Consult doctor if frequent or severe.",
+      "related_symptoms": ["nausea", "fainting", "headache", "blurred_vision"]
+    },
+    "back_pain": {
+      "description": "Pain in the back region",
+      "common_causes": ["Muscle strain", "Poor posture", "Herniated disc", "Arthritis"],
+      "severity": "mild_to_moderate",
+      "advice": "Rest, apply heat/cold, gentle stretching, maintain good posture. Consult doctor if severe or radiating to legs.",
+      "related_symptoms": ["muscle_stiffness", "numbness", "weakness"]
+    },
+    "joint_pain": {
+      "description": "Pain in one or more joints",
+      "common_causes": ["Arthritis", "Injury", "Overuse", "Infection"],
+      "severity": "mild_to_moderate",
+      "advice": "Rest the joint, apply ice, gentle movement. Consult doctor if swollen, red, or limiting movement.",
+      "related_symptoms": ["swelling", "stiffness", "redness", "warmth"]
+    },
+    "skin_rash": {
+      "description": "Changes in skin color, texture, or appearance",
+      "common_causes": ["Allergies", "Eczema", "Contact dermatitis", "Infections"],
+      "severity": "mild",
+      "advice": "Keep area clean and dry, avoid irritants, use moisturizer. Consult doctor if spreading, painful, or with fever.",
+      "related_symptoms": ["itching", "redness", "swelling", "blisters"]
+    },
+    "insomnia": {
+      "description": "Difficulty falling or staying asleep",
+      "common_causes": ["Stress", "Anxiety", "Poor sleep habits", "Caffeine", "Medical conditions"],
+      "severity": "mild",
+      "advice": "Maintain sleep schedule, avoid screens before bed, create relaxing bedtime routine. Consult doctor if chronic.",
+      "related_symptoms": ["fatigue", "irritability", "difficulty_concentrating"]
+    }
+  },
+  "conditions": {
+    "common_cold": {
+      "name": "Common Cold",
+      "symptoms": ["runny_nose", "sneezing", "sore_throat", "cough", "mild_fever"],
+      "duration": "7-10 days",
+      "treatment": "Rest, fluids, over-the-counter cold medications. No antibiotics needed (viral infection).",
+      "prevention": "Wash hands frequently, avoid close contact with sick people, don't touch face."
+    },
+    "flu": {
+      "name": "Influenza (Flu)",
+      "symptoms": ["high_fever", "body_ache", "fatigue", "cough", "headache"],
+      "duration": "1-2 weeks",
+      "treatment": "Rest, fluids, antiviral medications if prescribed early. Consult doctor if high-risk group.",
+      "prevention": "Annual flu vaccine, good hygiene, avoid sick people."
+    },
+    "gastroenteritis": {
+      "name": "Stomach Flu (Gastroenteritis)",
+      "symptoms": ["diarrhea", "nausea", "vomiting", "stomach_cramps", "mild_fever"],
+      "duration": "1-3 days",
+      "treatment": "Stay hydrated with ORS, rest, bland diet. Consult doctor if severe dehydration.",
+      "prevention": "Wash hands, safe food handling, clean water."
+    },
+    "migraine": {
+      "name": "Migraine Headache",
+      "symptoms": ["severe_headache", "nausea", "sensitivity_to_light", "visual_disturbances"],
+      "duration": "4-72 hours",
+      "treatment": "Rest in dark room, pain relievers, prescription medications. Identify and avoid triggers.",
+      "prevention": "Regular sleep, stress management, avoid triggers (certain foods, stress)."
+    },
+    "hypertension": {
+      "name": "High Blood Pressure",
+      "symptoms": ["often_no_symptoms", "headache", "dizziness", "chest_pain"],
+      "duration": "Chronic condition",
+      "treatment": "Lifestyle changes (diet, exercise), medications as prescribed. Regular monitoring essential.",
+      "prevention": "Healthy diet (low salt), regular exercise, maintain healthy weight, limit alcohol."
+    },
+    "diabetes": {
+      "name": "Diabetes",
+      "symptoms": ["increased_thirst", "frequent_urination", "fatigue", "blurred_vision", "slow_healing"],
+      "duration": "Chronic condition",
+      "treatment": "Blood sugar monitoring, medications/insulin, diet control, regular exercise.",
+      "prevention": "Maintain healthy weight, regular exercise, balanced diet, regular checkups."
+    },
+    "asthma": {
+      "name": "Asthma",
+      "symptoms": ["shortness_of_breath", "wheezing", "cough", "chest_tightness"],
+      "duration": "Chronic condition",
+      "treatment": "Inhalers (rescue and controller), avoid triggers, action plan with doctor.",
+      "prevention": "Identify and avoid triggers (allergens, smoke, cold air), take medications as prescribed."
+    }
+  },
+  "general_health": {
+    "nutrition": {
+      "balanced_diet": "Include fruits, vegetables, whole grains, lean proteins, and healthy fats daily.",
+      "hydration": "Drink 8-10 glasses of water daily. More if exercising or in hot weather.",
+      "vitamins": "Get vitamins from food first. Supplements only if deficient (consult doctor).",
+      "meal_timing": "Eat regular meals, don't skip breakfast, avoid late-night heavy meals."
+    },
+    "exercise": {
+      "recommendation": "150 minutes moderate exercise or 75 minutes vigorous exercise per week.",
+      "types": "Mix cardio (walking, running), strength training, and flexibility exercises.",
+      "benefits": "Improves heart health, weight management, mood, sleep, and reduces disease risk.",
+      "safety": "Start slowly, warm up, stay hydrated, listen to your body."
+    },
+    "sleep": {
+      "duration": "Adults need 7-9 hours, teenagers 8-10 hours, children 9-12 hours per night.",
+      "hygiene": "Regular schedule, dark quiet room, avoid screens 1 hour before bed, comfortable temperature.",
+      "importance": "Essential for physical health, mental health, immune function, and cognitive performance."
+    },
+    "mental_health": {
+      "stress_management": "Practice relaxation techniques, exercise, adequate sleep, social connections.",
+      "warning_signs": "Persistent sadness, anxiety, changes in sleep/appetite, loss of interest, thoughts of self-harm.",
+      "seeking_help": "Talk to doctor, counselor, or mental health professional. It's okay to ask for help.",
+      "self_care": "Regular exercise, healthy diet, adequate sleep, hobbies, social connections, mindfulness."
+    },
+    "preventive_care": {
+      "checkups": "Annual physical exam, dental checkups twice yearly, eye exams as recommended.",
+      "screenings": "Blood pressure, cholesterol, diabetes, cancer screenings as per age and risk factors.",
+      "vaccinations": "Stay up-to-date with recommended vaccines (flu, COVID, tetanus, etc.).",
+      "lifestyle": "Don't smoke, limit alcohol, maintain healthy weight, manage stress, stay active."
+    }
+  },
+  "emergency_signs": {
+    "seek_immediate_help": [
+      "Severe chest pain or pressure",
+      "Difficulty breathing or shortness of breath",
+      "Sudden severe headache",
+      "Loss of consciousness or fainting",
+      "Severe bleeding",
+      "Signs of stroke (face drooping, arm weakness, speech difficulty)",
+      "Severe allergic reaction (swelling, difficulty breathing)",
+      "High fever with stiff neck",
+      "Severe abdominal pain",
+      "Thoughts of self-harm"
+    ],
+    "emergency_number": "Call emergency services (108 in India, 911 in US) immediately for life-threatening situations."
+  }
+}

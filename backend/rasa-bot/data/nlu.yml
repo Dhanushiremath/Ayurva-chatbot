@@ -1,0 +1,213 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - namaste
+    - good morning
+    - evening
+    - hi ayurva
+    - is anyone there?
+    - hello bot
+
+- intent: goodbye
+  examples: |
+    - bye
+    - goodbye
+    - see you
+    - talk to you later
+    - take care
+    - thanks bye
+    - quit
+    - exit
+
+- intent: affirm
+  examples: |
+    - yes
+    - yeah
+    - yep
+    - sure
+    - of course
+    - that sounds good
+    - correct
+    - ok
+    - okay
+
+- intent: deny
+  examples: |
+    - no
+    - nope
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+    - not interested
+
+- intent: symptom_report
+  examples: |
+    - I have a [fever](symptom)
+    - experiencing [migraine](symptom)
+    - my [stomach](body_part) is [hurting](symptom) [badly](severity)
+    - I've got a [cough](symptom) and [sore throat](symptom) since [Monday](duration)
+    - [sharp pain](symptom) in my [chest](body_part)
+    - feeling [dizzy](symptom) and [nauseous](symptom)
+    - I have [diarrhea](symptom) for [3 days](duration)
+    - [chronic](severity) [back pain](symptom)
+    - my [knee](body_part) is [swollen](symptom)
+    - I'm [extremely](severity) [tired](symptom)
+    - [mild](severity) [itchiness](symptom) on my [arm](body_part)
+    - [terrible](severity) [headache](symptom)
+    - I've been [vomiting](symptom) all night
+    - [constant](severity) [runny nose](symptom)
+    - [wheezing](symptom) when I breathe
+
+- intent: condition_inquiry
+  examples: |
+    - what is [diabetes](condition)
+    - tell me about [hypertension](condition)
+    - what are the symptoms of [malaria](condition)
+    - info on [covid-19](condition)
+    - can you explain [asthma](condition)
+    - what causes [dengue](condition)
+    - treatments for [tuberculosis](condition)
+    - is [anemia](condition) dangerous?
+    - [flu](condition) vs [cold](condition)
+
+- intent: medicine_question
+  examples: |
+    - what is [paracetamol](medicine) used for
+    - can I take [aspirin](medicine) for a [headache](symptom)?
+    - side effects of [ibuprofen](medicine)
+    - dosage for [amoxicillin](medicine)
+    - what does [metformin](medicine) do?
+    - is [insulin](medicine) necessary for [diabetes](condition)?
+    - [cetirizine](medicine) for [allergies](symptom)
+    - can I mix [tylenol](medicine) and [advil](medicine)?
+    - tell me about [penicillin](medicine)
+
+- intent: prevention_advice
+  examples: |
+    - how to avoid [flu](condition)
+    - ways to prevent [heart disease](condition)
+    - hygiene tips to stay healthy
+    - how can I stay fit?
+    - [healthy diet](prevention) tips
+    - [exercise](prevention) routine for beginners
+    - how to improve my [immune system](body_part)
+    - prevent [obesity](condition)
+    - wellness advice for [seniors](age)
+
+- intent: emergency
+  examples: |
+    - I can't breathe
+    - I'm having a [heart attack](condition)
+    - help I'm bleeding
+    - stroke symptoms
+    - unconscious person help
+    - immediate medical assistance needed
+    - emergency
+    - call an ambulance
+
+- intent: give_age
+  examples: |
+    - I am [25](age) years old
+    - I'm [30](age)
+    - [45](age)
+    - [18](age)
+    - age [50](age)
+
+- intent: give_gender
+  examples: |
+    - I am [male](gender)
+    - [female](gender)
+    - [non-binary](gender)
+    - [man](gender)
+    - [woman](gender)
+
+- intent: give_duration
+  examples: |
+    - [3 days](duration)
+    - [one week](duration)
+    - since [yesterday](duration)
+    - for [two weeks](duration)
+    - just [started](duration)
+
+- intent: give_severity
+  examples: |
+    - it's [mild](severity)
+    - [severe](severity) pain
+    - [very bad](severity)
+    - [moderate](severity)
+    - [extremely painful](severity)
+
+- intent: out_of_scope
+  examples: |
+    - who is the president?
+    - what's the weather?
+    - tell me a joke
+    - can you fly?
+    - talk about movies
+
+- lookup: symptom
+  examples: |
+    - fever
+    - cough
+    - headache
+    - nausea
+    - vomiting
+    - diarrhea
+    - fatigue
+    - dizziness
+    - rash
+    - congestion
+    - sore throat
+    - chills
+    - aches
+
+- lookup: medicine
+  examples: |
+    - paracetamol
+    - ibuprofen
+    - aspirin
+    - amoxicillin
+    - metformin
+    - insulin
+    - cetirizine
+    - atorvastatin
+    - lisinopril
+    - omeprazole
+
+- lookup: condition
+  examples: |
+    - diabetes
+    - hypertension
+    - asthma
+    - malaria
+    - dengue
+    - covid-19
+    - tuberculosis
+    - anemia
+    - arthritis
+    - bronchitis
+
+- synonym: paracetamol
+  examples: |
+    - tylenol
+    - acetaminophen
+    - panadol
+
+- synonym: ibuprofen
+  examples: |
+    - advil
+    - motrin
+
+- synonym: severe
+  examples: |
+    - critical
+    - acute
+    - intense
+    - very bad

@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #2D4F46; /* Deep Forest Green */
+  --secondary: #C16A46; /* Terracotta */
+  --accent: #E8B67D; /* Warm Bronze/Gold */
+  --background: #FDF9F0; /* Cream/Beige */
+  --text-dark: #2D2A26;
+}
+
+body {
+  margin: 0;
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--background);
+  color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, .serif {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.glass {
+  background: rgba(253, 249, 240, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(193, 106, 70, 0.1);
+  box-shadow: 0 12px 40px 0 rgba(45, 79, 70, 0.04);
+}
+
+.gradient-mesh {
+  background-color: #FDF9F0;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(17,60%,52%,0.08) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(165,28%,24%,0.05) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(34,68%,70%,0.08) 0, transparent 50%);
+  position: relative;
+}
+
+.gradient-mesh::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.chat-bubble-user {
+  background: #C16A46; /* Terracotta */
+  box-shadow: 0 4px 15px rgba(193, 106, 70, 0.15);
+}
+
+.chat-bubble-bot {
+  background: #ffffff;
+  border: 1.5px solid #EFE9E1;
+  box-shadow: 0 4px 15px rgba(45, 79, 70, 0.03);
+}
+
+/* Markdown Styling inside bubbles */
+.chat-bubble-user strong, .chat-bubble-bot strong {
+  font-weight: 700;
+}
+
+.chat-bubble-user p, .chat-bubble-bot p {
+  margin: 0;
+}
+
+.chat-bubble-user p + p, .chat-bubble-bot p + p {
+  margin-top: 0.75rem;
+}
+
+.chat-bubble-bot ul, .chat-bubble-bot ol {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
+}
+
+.chat-bubble-bot li {
+  margin: 0.25rem 0;
+}

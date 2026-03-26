@@ -1,0 +1,106 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - symptom_report
+  - emergency
+  - condition_inquiry
+  - medicine_question
+  - prevention_advice
+  - give_age
+  - give_gender
+  - give_duration
+  - give_severity
+  - out_of_scope
+
+entities:
+  - symptom
+  - disease
+  - condition
+  - body_part
+  - age
+  - gender
+  - duration
+  - severity
+  - medicine
+
+slots:
+  symptoms:
+    type: list
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: symptom
+  
+  condition:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: condition
+
+  medicine:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: medicine
+
+  age:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: age
+  
+  gender:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: gender
+
+  duration:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: duration
+
+  severity:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: severity
+
+responses:
+  utter_greet:
+    - text: "Hello! I'm Ayurva, your intelligent health assistant. How can I help you today?"
+    - text: "Namaste! I'm Ayurva. I can assist with symptoms, medical information, and wellness tips."
+  
+  utter_goodbye:
+    - text: "Take care! Stay healthy. Feel free to return if you have more questions."
+  
+  utter_emergency:
+    - text: "⚠️ This sounds like an emergency! Please contact emergency services immediately or visit the nearest hospital."
+  
+  utter_out_of_scope:
+    - text: "I'm sorry, I'm specialized in health and medical topics. I can't help with that specific question."
+    - text: "I might not have been trained for that. Try asking me about symptoms, conditions, or medications."
+
+  utter_default:
+    - text: "I'm not sure I understand. Could you rephrase your health concern?"
+
+actions:
+  - action_check_symptoms
+  - action_provide_health_advice
+  - action_get_disease_info
+  - action_emergency_check
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
