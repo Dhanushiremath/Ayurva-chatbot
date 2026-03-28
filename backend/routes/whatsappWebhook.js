@@ -4,6 +4,49 @@ const twilioService = require('../services/twilio-service');
 const langchainService = require('../services/langchain-service');
 const rasaService = require('../services/rasa-service');
 const nlpService = require('../services/nlp-service-enhanced');
+const cacheService = require('../services/cache-service');
+
+/**
+ * Process WhatsApp message with caching and fallback
+ */
+async function processWhatsAppMessage(body, phoneNumber) {
+  // Check cache first
+  const cachedResponse = cacheService.getCachedResponse(body);
+  if (cachedResponse) {
+    console.log('⚡ Using cached response (instant)');
+    return { response: cachedResponse, service: 'cache' };
+  }
+
+  let responseMessage = '';
+  let usedService = 'langchain';
+  
+  try {
+    console.log('🧠 Processing with LangChain + Gemini AI...');
+    responseMessage = await langchainService.processMessage(body);
+  } catch (lcError) {
+    console.warn('⚠️ LangChain failed, falling back to Rasa:', lcError.message);
+    usedService = 'rasa';
+    
+    try {
+      responseMessage = await rasaService.processMessage(body, phoneNumber);
+    } catch (rasaError) {
+      console.warn('⚠️ Rasa failed, falling back to local NLP:', rasaError.message);
+      usedService = 'local-nlp';
+      
+      try {
+        responseMessage = await nlpService.processMessage(body, phoneNumber);
+      } catch (nlpError) {
+        console.error('❌ All services failed:', nlpError);
+        responseMessage = `Hello! I'm Ayurva, your AI healthcare assistant powered by Google Gemini.\n\nI can help you with:\n• Symptom analysis\n• Disease information\n• Health advice\n• Emergency detection\n\nWhat would you like to know?`;
+      }
+    }
+  }
+
+  // Cache the response
+  cacheService.setCachedResponse(body, responseMessage);
+  
+  return { response: responseMessage, service: usedService };
+}
 
 /**
  * WhatsApp Webhook - Receives incoming messages from users
@@ -21,41 +64,19 @@ router.post('/webhook', async (req, res) => {
     // Extract phone number (remove 'whatsapp:' prefix)
     const phoneNumber = From.replace('whatsapp:', '');
 
-    // Process the message with LangChain (Gemini AI) primary, then fallbacks
-    let responseMessage = '';
-    let usedService = 'langchain';
-    
-    try {
-      console.log('🧠 Processing with LangChain + Gemini AI...');
-      responseMessage = await langchainService.processMessage(Body);
-    } catch (lcError) {
-      console.warn('⚠️ LangChain failed, falling back to Rasa:', lcError.message);
-      usedService = 'rasa';
-      
-      try {
-        responseMessage = await rasaService.processMessage(Body, phoneNumber);
-      } catch (rasaError) {
-        console.warn('⚠️ Rasa failed, falling back to local NLP:', rasaError.message);
-        usedService = 'local-nlp';
-        
-        try {
-          responseMessage = await nlpService.processMessage(Body, phoneNumber);
-        } catch (nlpError) {
-          console.error('❌ All services failed:', nlpError);
-          responseMessage = `Hello! I'm Ayurva, your AI healthcare assistant powered by Google Gemini.\n\nI can help you with:\n• Symptom analysis\n• Disease information\n• Health advice\n• Emergency detection\n\nWhat would you like to know?`;
-        }
-      }
-    }
+    // Process message with caching
+    const { response: responseMessage, service: usedService } = await processWhatsAppMessage(Body, phoneNumber);
 
     console.log(`✅ Response via ${usedService} sent successfully`);
 
     // Truncate response if too long for WhatsApp (1600 char limit)
-    if (responseMessage.length > 1500) {
-      responseMessage = responseMessage.substring(0, 1500) + '...\n\nFor complete information, please visit: https://ayurva-chatbot.vercel.app';
+    let finalResponse = responseMessage;
+    if (finalResponse.length > 1500) {
+      finalResponse = finalResponse.substring(0, 1500) + '...\n\nFor complete information, please visit: https://ayurva-chatbot.vercel.app';
     }
 
     // Send response back via WhatsApp
-    await twilioService.sendWhatsApp(phoneNumber, responseMessage);
+    await twilioService.sendWhatsApp(phoneNumber, finalResponse);
     
     // Respond to Twilio with empty TwiML (required)
     res.type('text/xml');
@@ -80,41 +101,19 @@ router.post('/incoming', async (req, res) => {
     // Extract phone number (remove 'whatsapp:' prefix)
     const phoneNumber = From.replace('whatsapp:', '');
 
-    // Process the message with LangChain (Gemini AI) primary, then fallbacks
-    let responseMessage = '';
-    let usedService = 'langchain';
-    
-    try {
-      console.log('🧠 Processing with LangChain + Gemini AI...');
-      responseMessage = await langchainService.processMessage(Body);
-    } catch (lcError) {
-      console.warn('⚠️ LangChain failed, falling back to Rasa:', lcError.message);
-      usedService = 'rasa';
-      
-      try {
-        responseMessage = await rasaService.processMessage(Body, phoneNumber);
-      } catch (rasaError) {
-        console.warn('⚠️ Rasa failed, falling back to local NLP:', rasaError.message);
-        usedService = 'local-nlp';
-        
-        try {
-          responseMessage = await nlpService.processMessage(Body, phoneNumber);
-        } catch (nlpError) {
-          console.error('❌ All services failed:', nlpError);
-          responseMessage = `Hello! I'm Ayurva, your AI healthcare assistant powered by Google Gemini.\n\nI can help you with:\n• Symptom analysis\n• Disease information\n• Health advice\n• Emergency detection\n\nWhat would you like to know?`;
-        }
-      }
-    }
+    // Process message with caching
+    const { response: responseMessage, service: usedService } = await processWhatsAppMessage(Body, phoneNumber);
 
     console.log(`✅ Response via ${usedService} sent successfully`);
 
     // Truncate response if too long for WhatsApp (1600 char limit)
-    if (responseMessage.length > 1500) {
-      responseMessage = responseMessage.substring(0, 1500) + '...\n\nFor complete information, please visit: https://ayurva-chatbot.vercel.app';
+    let finalResponse = responseMessage;
+    if (finalResponse.length > 1500) {
+      finalResponse = finalResponse.substring(0, 1500) + '...\n\nFor complete information, please visit: https://ayurva-chatbot.vercel.app';
     }
 
     // Send response back via WhatsApp
-    await twilioService.sendWhatsApp(phoneNumber, responseMessage);
+    await twilioService.sendWhatsApp(phoneNumber, finalResponse);
     
     // Respond to Twilio with empty TwiML (required)
     res.type('text/xml');
