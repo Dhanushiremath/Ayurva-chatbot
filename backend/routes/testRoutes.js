@@ -100,4 +100,40 @@ router.get('/twilio-status', (req, res) => {
   });
 });
 
+/**
+ * Diagnostic endpoint to check all services
+ * GET /api/test/services-status
+ */
+router.get('/services-status', (req, res) => {
+  const geminiConfigured = !!process.env.GOOGLE_API_KEY;
+  const grokConfigured = !!process.env.GROK_API_KEY;
+  
+  res.status(200).json({
+    timestamp: new Date().toISOString(),
+    services: {
+      gemini: {
+        configured: geminiConfigured,
+        apiKey: geminiConfigured ? `${process.env.GOOGLE_API_KEY.substring(0, 10)}...` : 'Not set',
+        status: geminiConfigured ? 'Configured' : 'Missing API key'
+      },
+      grok: {
+        configured: grokConfigured,
+        apiKey: grokConfigured ? `${process.env.GROK_API_KEY.substring(0, 10)}...` : 'Not set',
+        model: process.env.GROK_MODEL || 'grok-beta',
+        timeout: process.env.GROK_TIMEOUT || '5000',
+        status: grokConfigured ? 'Configured' : 'Missing API key'
+      },
+      twilio: {
+        configured: !!(process.env.TWILIO_SID && process.env.TWILIO_TOKEN),
+        status: !!(process.env.TWILIO_SID && process.env.TWILIO_TOKEN) ? 'Configured' : 'Missing credentials'
+      },
+      mongodb: {
+        configured: !!process.env.MONGODB_URI,
+        status: !!process.env.MONGODB_URI ? 'Configured' : 'Missing URI'
+      }
+    },
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 module.exports = router;

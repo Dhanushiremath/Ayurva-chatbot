@@ -91,11 +91,13 @@ module.exports = {
       }
       
       // Search enhanced QA
-      for (const topic of enhancedQA.health_topics) {
-        if (topic.keywords.some(kw => lowerMessage.includes(kw.toLowerCase()))) {
-          response = topic.response;
-          responseCache.set(cacheKey, response);
-          return response;
+      if (enhancedQA && enhancedQA.health_topics && Array.isArray(enhancedQA.health_topics)) {
+        for (const topic of enhancedQA.health_topics) {
+          if (topic.keywords && topic.keywords.some(kw => lowerMessage.includes(kw.toLowerCase()))) {
+            response = topic.response;
+            responseCache.set(cacheKey, response);
+            return response;
+          }
         }
       }
       
