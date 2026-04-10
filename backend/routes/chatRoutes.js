@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const langchainService = require('../services/langchain-service');
+const grokService = require('../services/grok-service');
 const rasaService = require('../services/rasa-service');
 const nlpService = require('../services/nlp-service-enhanced');
 const cacheService = require('../services/cache-service');
 
-console.log('🔄 Chat Routes loaded - Primary Engine: LangChain (Gemini) + RAG with Caching');
+console.log('🔄 Chat Routes loaded - Primary Engine: Grok AI with Caching');
 
 router.get('/test', (req, res) => {
-  res.json({ message: 'Chat route is working!', primary: 'langchain', secondary: 'rasa' });
+  res.json({ message: 'Chat route is working!', primary: 'grok', secondary: 'gemini' });
 });
 
 router.post('/', async (req, res) => {
@@ -32,24 +33,35 @@ router.post('/', async (req, res) => {
     }
     
     let response;
-    let usedService = 'langchain';
+    let usedService = 'grok';
     
     try {
-      // Primary: Try LangChain (High Intelligence)
-      console.log('🧠 Attempting LangChain + RAG processing...');
-      response = await langchainService.processMessage(message);
-    } catch (lcError) {
-      console.warn('⚠️ LangChain failed, falling back to Rasa:', lcError.message);
+      // Primary: Try Grok AI (High Intelligence)
+      console.log('🤖 Attempting Grok API processing...');
+      response = await grokService.processMessage(message);
+      console.log('✅ Response via grok sent successfully');
+    } catch (grokError) {
+      console.warn('⚠️ Grok failed, falling back to Gemini:', grokError.message);
       
       try {
-        // Fallback 1: Try Rasa (Structured Flow)
-        usedService = 'rasa';
-        response = await rasaService.processMessage(message, userId || 'user');
-      } catch (rasaError) {
-        // Fallback 2: Use local keyword NLP
-        console.warn('⚠️ Rasa unavailable, falling back to local NLP');
-        usedService = 'local-nlp';
-        response = await nlpService.processMessage(message, userId);
+        // Fallback 1: Try Gemini/LangChain (Secondary AI)
+        console.log('🧠 Attempting LangChain + RAG processing...');
+        usedService = 'langchain';
+        response = await langchainService.processMessage(message);
+        console.log('✅ Response via langchain sent successfully');
+      } catch (lcError) {
+        console.warn('⚠️ LangChain failed, falling back to Rasa:', lcError.message);
+        
+        try {
+          // Fallback 2: Try Rasa (Structured Flow)
+          usedService = 'rasa';
+          response = await rasaService.processMessage(message, userId || 'user');
+        } catch (rasaError) {
+          // Fallback 3: Use local keyword NLP
+          console.warn('⚠️ Rasa unavailable, falling back to local NLP');
+          usedService = 'local-nlp';
+          response = await nlpService.processMessage(message, userId);
+        }
       }
     }
     

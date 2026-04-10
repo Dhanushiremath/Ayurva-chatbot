@@ -11,8 +11,6 @@ jest.mock('mongoose', () => ({
   }))
 }));
 
-const nlpService = require('../services/nlp-service');
-
 const app = express();
 app.use(express.json());
 app.use('/api/chat', require('../routes/chatRoutes'));

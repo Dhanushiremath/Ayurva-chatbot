@@ -41,6 +41,8 @@ __pycache__/
 .Python
 venv/
 env/
+rasa-env/
+*/rasa-env/
 *.egg-info/
 
 # ML Models

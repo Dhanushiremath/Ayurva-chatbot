@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const twilioService = require('../services/twilio-service');
 const langchainService = require('../services/langchain-service');
+const grokService = require('../services/grok-service');
 const rasaService = require('../services/rasa-service');
 const nlpService = require('../services/nlp-service-enhanced');
 const cacheService = require('../services/cache-service');
@@ -18,26 +19,35 @@ async function processWhatsAppMessage(body, phoneNumber) {
   }
 
   let responseMessage = '';
-  let usedService = 'langchain';
+  let usedService = 'grok';
   
   try {
-    console.log('🧠 Processing with LangChain + Gemini AI...');
-    responseMessage = await langchainService.processMessage(body);
-  } catch (lcError) {
-    console.warn('⚠️ LangChain failed, falling back to Rasa:', lcError.message);
-    usedService = 'rasa';
+    console.log('🤖 Processing with Grok AI...');
+    responseMessage = await grokService.processMessage(body);
+    console.log(`✅ Response via grok sent successfully (${responseMessage.length} chars)`);
+  } catch (grokError) {
+    console.warn('⚠️ Grok failed, falling back to Gemini:', grokError.message);
+    usedService = 'gemini';
     
     try {
-      responseMessage = await rasaService.processMessage(body, phoneNumber);
-    } catch (rasaError) {
-      console.warn('⚠️ Rasa failed, falling back to local NLP:', rasaError.message);
-      usedService = 'local-nlp';
+      console.log('🧠 Attempting LangChain + Gemini AI...');
+      responseMessage = await langchainService.processMessage(body);
+    } catch (lcError) {
+      console.warn('⚠️ Gemini failed, falling back to Rasa:', lcError.message);
+      usedService = 'rasa';
       
       try {
-        responseMessage = await nlpService.processMessage(body, phoneNumber);
-      } catch (nlpError) {
-        console.error('❌ All services failed:', nlpError);
-        responseMessage = `Hello! I'm Ayurva, your AI healthcare assistant powered by Google Gemini.\n\nI can help you with:\n• Symptom analysis\n• Disease information\n• Health advice\n• Emergency detection\n\nWhat would you like to know?`;
+        responseMessage = await rasaService.processMessage(body, phoneNumber);
+      } catch (rasaError) {
+        console.warn('⚠️ Rasa failed, falling back to local NLP:', rasaError.message);
+        usedService = 'local-nlp';
+        
+        try {
+          responseMessage = await nlpService.processMessage(body, phoneNumber);
+        } catch (nlpError) {
+          console.error('❌ All services failed:', nlpError);
+          responseMessage = `Hello! I'm Ayurva, your AI healthcare assistant powered by Grok AI.\n\nI can help you with:\n• Symptom analysis\n• Disease information\n• Health advice\n• Emergency detection\n\nWhat would you like to know?`;
+        }
       }
     }
   }
