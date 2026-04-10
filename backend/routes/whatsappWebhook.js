@@ -19,21 +19,21 @@ async function processWhatsAppMessage(body, phoneNumber) {
   }
 
   let responseMessage = '';
-  let usedService = 'grok';
+  let usedService = 'gemini';
   
   try {
-    console.log('🤖 Processing with Grok AI...');
-    responseMessage = await grokService.processMessage(body);
-    console.log(`✅ Response via grok sent successfully (${responseMessage.length} chars)`);
-  } catch (grokError) {
-    console.warn('⚠️ Grok failed, falling back to Gemini:', grokError.message);
-    usedService = 'gemini';
+    console.log('🧠 Processing with LangChain + Gemini AI...');
+    responseMessage = await langchainService.processMessage(body);
+  } catch (lcError) {
+    console.warn('⚠️ Gemini failed, falling back to Grok:', lcError.message);
+    usedService = 'grok';
     
     try {
-      console.log('🧠 Attempting LangChain + Gemini AI...');
-      responseMessage = await langchainService.processMessage(body);
-    } catch (lcError) {
-      console.warn('⚠️ Gemini failed, falling back to Rasa:', lcError.message);
+      console.log('🤖 Attempting Grok API processing...');
+      responseMessage = await grokService.processMessage(body);
+      console.log(`✅ Response via grok sent successfully (${responseMessage.length} chars)`);
+    } catch (grokError) {
+      console.warn('⚠️ Grok failed, falling back to Rasa:', grokError.message);
       usedService = 'rasa';
       
       try {

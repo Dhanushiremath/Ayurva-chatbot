@@ -33,24 +33,24 @@ router.post('/', async (req, res) => {
     }
     
     let response;
-    let usedService = 'grok';
+    let usedService = 'langchain';
     
     try {
-      // Primary: Try Grok AI (High Intelligence)
-      console.log('🤖 Attempting Grok API processing...');
-      response = await grokService.processMessage(message);
-      console.log('✅ Response via grok sent successfully');
-    } catch (grokError) {
-      console.warn('⚠️ Grok failed, falling back to Gemini:', grokError.message);
+      // Primary: Try Gemini/LangChain (High Intelligence)
+      console.log('🧠 Attempting LangChain + RAG processing...');
+      response = await langchainService.processMessage(message);
+      console.log('✅ Response via langchain sent successfully');
+    } catch (lcError) {
+      console.warn('⚠️ LangChain failed, falling back to Grok:', lcError.message);
       
       try {
-        // Fallback 1: Try Gemini/LangChain (Secondary AI)
-        console.log('🧠 Attempting LangChain + RAG processing...');
-        usedService = 'langchain';
-        response = await langchainService.processMessage(message);
-        console.log('✅ Response via langchain sent successfully');
-      } catch (lcError) {
-        console.warn('⚠️ LangChain failed, falling back to Rasa:', lcError.message);
+        // Fallback 1: Try Grok AI (Secondary AI)
+        console.log('🤖 Attempting Grok API processing...');
+        usedService = 'grok';
+        response = await grokService.processMessage(message);
+        console.log('✅ Response via grok sent successfully');
+      } catch (grokError) {
+        console.warn('⚠️ Grok failed, falling back to Rasa:', grokError.message);
         
         try {
           // Fallback 2: Try Rasa (Structured Flow)
