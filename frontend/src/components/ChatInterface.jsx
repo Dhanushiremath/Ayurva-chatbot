@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
-import { Send, User, Bot, Globe, AlertCircle, LogOut, Bell, MapPin } from 'lucide-react';
+import { Send, User, Bot, Globe, AlertCircle, LogOut, Bell, MapPin, Paperclip, X, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { useTranslation } from '../i18n/translations';
 import NotificationSettings from './NotificationSettings';
+import { useVoice } from '../hooks/useVoice';
 
 const LotusIcon = ({ size = 24, className = "" }) => (
   <svg 
@@ -37,6 +38,71 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageName, setSelectedImageName] = useState('');
+  const fileInputRef = useRef(null);
+
+  // Track which message index is currently being spoken
+  const [speakingIdx, setSpeakingIdx] = useState(null);
+
+  // Voice hook — STT fills the input box, TTS reads bot messages
+  const handleTranscript = useCallback((text) => {
+    setInput(text);
+  }, []);
+
+  const {
+    speak, stopSpeaking, isSpeaking,
+    startListening, stopListening, isListening,
+    transcript, ttsSupported, sttSupported
+  } = useVoice(language, handleTranscript);
+
+  // When interim transcript updates, mirror it into the input
+  useEffect(() => {
+    if (transcript) setInput(transcript);
+  }, [transcript]);
+
+  // Stop speaking when language changes
+  useEffect(() => {
+    stopSpeaking();
+    setSpeakingIdx(null);
+  }, [language]);
+
+  const handleSpeak = (content, idx) => {
+    if (isSpeaking && speakingIdx === idx) {
+      stopSpeaking();
+      setSpeakingIdx(null);
+    } else {
+      setSpeakingIdx(idx);
+      speak(content);
+    }
+  };
+
+  // Clear speakingIdx when TTS naturally ends
+  useEffect(() => {
+    if (!isSpeaking) setSpeakingIdx(null);
+  }, [isSpeaking]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSelectedImageName(file.name);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setSelectedImage(reader.result); // Base64 data URL
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleClearImage = () => {
+    setSelectedImage(null);
+    setSelectedImageName('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,18 +123,28 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
   const handleSend = async (e, directMessage) => {
     if (e) e.preventDefault();
     const messageToSend = directMessage || input;
-    if (!messageToSend.trim()) return;
+    if (!messageToSend.trim() && !selectedImage) return;
 
-    const userMessage = { role: 'user', content: messageToSend, timestamp: new Date() };
+    const userMessage = { 
+      role: 'user', 
+      content: messageToSend || (language === 'hi' ? "इस तस्वीर का विश्लेषण करें" : "Analyze this image"), 
+      image: selectedImage,
+      timestamp: new Date() 
+    };
+    
     setMessages(prev => [...prev, userMessage]);
     if (!directMessage) setInput('');
+    
+    const imagePayload = selectedImage;
+    handleClearImage();
     setIsLoading(true);
 
     try {
       const response = await axios.post(`${API_URL}/chat`, {
-        message: messageToSend,
+        message: messageToSend || "Analyze this image",
         language: language,
-        userId: user?._id || user?.phone || 'temp_user_123'
+        userId: user?._id || user?.phone || 'temp_user_123',
+        image: imagePayload
       });
 
       const botMessage = {
@@ -94,54 +170,42 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
   return (
     <div className="flex flex-col h-full w-full bg-white/50 font-sans transition-all duration-500">
       {/* Header */}
-      <header className="bg-white/60 backdrop-blur-md p-6 flex justify-between items-center border-b border-slate-100 shrink-0 z-10">
+      <header className="bg-gradient-to-r from-primary via-[#1e7a6c] to-[#1a6b5e] p-6 flex justify-between items-center shrink-0 z-10 shadow-lg">
         <div className="flex items-center gap-4">
-          <div className="bg-primary p-3 rounded-2xl shadow-xl shadow-primary/10">
-            <LotusIcon size={24} className="text-[#E8B67D]" />
+          <div className="bg-white/15 border border-white/20 p-3 rounded-2xl shadow-xl backdrop-blur-sm">
+            <LotusIcon size={24} className="text-accent" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-primary leading-none serif">{t.appName}</h1>
-            <span className="text-[10px] text-secondary font-black uppercase tracking-[0.2em] mt-1.5 block opacity-80">{t.appSubtitle}</span>
+            <h1 className="text-2xl font-bold tracking-tight text-white leading-none serif">{t.appName}</h1>
+            <span className="text-[10px] text-accent/80 font-black uppercase tracking-[0.2em] mt-1.5 block">{t.appSubtitle}</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 bg-slate-100/80 px-4 py-2 rounded-2xl border border-white/50 shadow-sm transition-all hover:bg-white">
+          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-2xl border border-white/15 shadow-sm hover:bg-white/20 transition-all">
             <Globe size={16} className="text-accent" />
-            <select 
-              value={language} 
+            <select
+              value={language}
               onChange={(e) => onLanguageChange(e.target.value)}
-              className="bg-transparent text-xs font-bold outline-none cursor-pointer text-slate-600 appearance-none pr-1"
+              className="bg-transparent text-xs font-bold outline-none cursor-pointer text-white appearance-none pr-1"
             >
-              <option value="en">English</option>
-              <option value="hi">हिन्दी (Hindi)</option>
-              <option value="ta">தமிழ் (Tamil)</option>
-              <option value="te">తెలుగు (Telugu)</option>
-              <option value="bn">বাংলা (Bengali)</option>
-              <option value="mr">मराठी (Marathi)</option>
-              <option value="kn">ಕನ್ನಡ (Kannada)</option>
+              <option value="en" className="text-slate-800">English</option>
+              <option value="hi" className="text-slate-800">हिन्दी</option>
+              <option value="ta" className="text-slate-800">தமிழ்</option>
+              <option value="te" className="text-slate-800">తెలుగు</option>
+              <option value="bn" className="text-slate-800">বাংলা</option>
+              <option value="mr" className="text-slate-800">मराठी</option>
+              <option value="kn" className="text-slate-800">ಕನ್ನಡ</option>
             </select>
           </div>
-          <button
-            onClick={onOpenMap}
-            className="bg-slate-100/80 p-2 rounded-xl border border-white/50 shadow-sm transition-all hover:bg-red-50 hover:border-red-200 group"
-            title={t.findHospital || "Find Hospital"}
-          >
-            <MapPin size={16} className="text-slate-600 group-hover:text-red-500" />
+          <button onClick={onOpenMap} className="bg-white/10 hover:bg-red-400/30 text-white p-2 rounded-xl border border-white/15 shadow-sm transition-all hover:border-red-300/40 group" title={t.findHospital || "Find Hospital"}>
+            <MapPin size={16} className="group-hover:text-red-200" />
           </button>
-          <button
-            onClick={() => setShowNotifications(true)}
-            className="bg-slate-100/80 p-2 rounded-xl border border-white/50 shadow-sm transition-all hover:bg-accent/10 hover:border-accent/30 group relative"
-            title="Notification Settings"
-          >
-            <Bell size={16} className="text-slate-600 group-hover:text-accent" />
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+          <button onClick={() => setShowNotifications(true)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-xl border border-white/15 shadow-sm transition-all relative" title="Notification Settings">
+            <Bell size={16} />
+            <span className="absolute -top-1 -right-1 notif-dot"></span>
           </button>
-          <button
-            onClick={onLogout}
-            className="bg-slate-100/80 p-2 rounded-xl border border-white/50 shadow-sm transition-all hover:bg-red-50 hover:border-red-200 group"
-            title="Logout"
-          >
-            <LogOut size={16} className="text-slate-600 group-hover:text-red-500" />
+          <button onClick={onLogout} className="bg-white/10 hover:bg-red-400/30 text-white p-2 rounded-xl border border-white/15 shadow-sm transition-all hover:border-red-300/40" title="Logout">
+            <LogOut size={16} />
           </button>
         </div>
       </header>
@@ -168,6 +232,13 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
                       ? 'bg-red-50 text-red-700 border border-red-100 rounded-tl-none' 
                       : 'chat-bubble-bot text-slate-700 rounded-tl-none shadow-blue-500/5'
                 }`}>
+                  {msg.image && (
+                    <img 
+                      src={msg.image} 
+                      alt="User health upload" 
+                      className="max-w-xs max-h-48 object-cover rounded-xl mb-3 shadow-md border border-white/20"
+                    />
+                  )}
                   <div className="prose prose-sm max-w-none text-inherit leading-relaxed">
                     <ReactMarkdown>{msg.content}</ReactMarkdown>
                   </div>
@@ -179,17 +250,45 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
                       </span>
                     </div>
                   )}
+                  {/* TTS Read-aloud button — only for assistant messages */}
+                  {msg.role === 'assistant' && ttsSupported && (
+                    <div className="flex justify-end mt-2">
+                      <button
+                        onClick={() => handleSpeak(msg.content, idx)}
+                        title={speakingIdx === idx ? 'Stop reading' : 'Read aloud'}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all border ${
+                          speakingIdx === idx
+                            ? 'bg-secondary/10 text-secondary border-secondary/30'
+                            : 'bg-slate-100 text-slate-400 border-slate-200 hover:text-secondary hover:border-secondary/30 hover:bg-secondary/5'
+                        }`}
+                      >
+                        {speakingIdx === idx ? (
+                          <>
+                            <div className="voice-wave">
+                              <span></span><span></span><span></span><span></span>
+                            </div>
+                            Stop
+                          </>
+                        ) : (
+                          <><Volume2 size={11} /> Read</>
+                        )}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-white border border-slate-100 p-4 rounded-2xl shadow-md flex gap-1.5">
-              <div className="w-2.5 h-2.5 bg-accent/40 rounded-full animate-bounce"></div>
-              <div className="w-2.5 h-2.5 bg-accent/70 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-              <div className="w-2.5 h-2.5 bg-accent rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+          <div className="flex justify-start animate-fade-in">
+            <div className="flex items-center gap-4 bg-white border border-slate-100 px-5 py-4 rounded-2xl shadow-md rounded-tl-none">
+              <div className="flex gap-1.5">
+                <div className="typing-dot"></div>
+                <div className="typing-dot"></div>
+                <div className="typing-dot"></div>
+              </div>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Analyzing</span>
             </div>
           </div>
         )}
@@ -197,12 +296,12 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
       </main>
 
       {/* Quick Tags */}
-      <div className="px-6 py-3 bg-white/50 flex gap-2 overflow-x-auto no-scrollbar border-t border-slate-100/30 shrink-0">
+      <div className="px-5 py-3 bg-white/80 backdrop-blur-sm flex gap-2 overflow-x-auto no-scrollbar border-t border-slate-100/60 shrink-0">
         {t.quickTags.map(tag => (
           <button
             key={tag}
             onClick={() => handleSend(null, tag)}
-            className="whitespace-nowrap px-4 py-1.5 rounded-full bg-white border border-slate-200 text-xs font-bold text-slate-600 hover:bg-primary hover:text-accent hover:border-primary transition-all shadow-sm active:scale-95"
+            className="quick-tag"
           >
             {tag}
           </button>
@@ -210,26 +309,65 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
       </div>
 
       {/* Input */}
-      <footer className="p-6 bg-white border-t border-slate-100/50 shrink-0">
-        <form onSubmit={handleSend} className="relative flex items-center gap-4">
+      <footer className="p-5 bg-white border-t border-slate-100 shrink-0">
+        {selectedImage && (
+          <div className="mb-3 flex items-center gap-3 p-3 bg-gradient-to-r from-teal-50 to-green-50 border border-teal-100 rounded-2xl relative max-w-xs shadow-sm">
+            <img src={selectedImage} alt="Selected thumbnail" className="w-12 h-12 object-cover rounded-lg border border-teal-200/50 shadow-sm" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-slate-700 truncate">{selectedImageName || 'image.jpg'}</p>
+              <p className="text-[9px] font-black text-teal-600 uppercase tracking-wider">Ready to analyze</p>
+            </div>
+            <button type="button" onClick={handleClearImage} className="absolute -top-1.5 -right-1.5 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full shadow-md transition-all hover:scale-110">
+              <X size={10} />
+            </button>
+          </div>
+        )}
+        <form onSubmit={handleSend} className="relative flex items-center gap-2">
+          <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden" />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="bg-gradient-to-br from-teal-50 to-green-50 hover:from-teal-100 hover:to-green-100 text-teal-700 border border-teal-200 p-4 rounded-[1.25rem] transition-all hover:scale-105 active:scale-95 flex items-center justify-center shadow-sm"
+            title="Attach health image"
+          >
+            <Paperclip size={20} />
+          </button>
+          {sttSupported && (
+            <button
+              type="button"
+              onClick={isListening ? stopListening : startListening}
+              title={isListening ? 'Stop listening' : 'Speak your message'}
+              className={`p-4 rounded-[1.25rem] transition-all flex items-center justify-center shadow-sm relative border ${
+                isListening ? 'mic-active border-red-300' : 'bg-gradient-to-br from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 text-orange-600 border-orange-200 hover:scale-105 active:scale-95'
+              }`}
+            >
+              {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+            </button>
+          )}
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={t.inputPlaceholder}
-            className="flex-1 bg-background/50 border-2 border-transparent rounded-[1.5rem] px-6 py-4 text-[15px] font-medium focus:bg-white focus:border-secondary/20 outline-none transition-all placeholder:text-slate-400"
+            placeholder={isListening ? '🎤 Listening...' : t.inputPlaceholder}
+            className={`flex-1 border-2 rounded-[1.5rem] px-6 py-4 text-[15px] font-medium outline-none transition-all placeholder:text-slate-400 ${
+              isListening
+                ? 'bg-red-50 border-red-200 focus:border-red-300'
+                : 'bg-slate-50 border-transparent focus:bg-white focus:border-primary/20 focus:shadow-[0_0_0_4px_rgba(26,107,94,0.08)]'
+            }`}
           />
           <button
             type="submit"
-            disabled={isLoading || !input.trim()}
-            className="bg-primary text-white p-4 rounded-[1.25rem] hover:scale-105 active:scale-95 disabled:opacity-40 transition-all shadow-xl shadow-primary/10 group"
+            disabled={isLoading || (!input.trim() && !selectedImage)}
+            className="bg-gradient-to-br from-primary to-[#2a8a7a] text-accent p-4 rounded-[1.25rem] hover:scale-105 active:scale-95 disabled:opacity-40 transition-all shadow-lg shadow-primary/20 group relative overflow-hidden"
           >
-            <Send size={22} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-[1.25rem]" />
+            <Send size={20} className="relative group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </button>
         </form>
-        <div className="flex items-center justify-center gap-2 mt-5 text-slate-400 font-bold text-[9px] uppercase tracking-[0.1em]">
-          <div className="w-1 h-1 rounded-full bg-secondary"></div>
+        <div className="flex items-center justify-center gap-2 mt-4 text-slate-400 font-bold text-[9px] uppercase tracking-[0.12em]">
+          <div className="w-1 h-1 rounded-full bg-gradient-to-r from-primary to-secondary"></div>
           {t.disclaimer}
+          <div className="w-1 h-1 rounded-full bg-gradient-to-r from-secondary to-accent"></div>
         </div>
       </footer>
 
