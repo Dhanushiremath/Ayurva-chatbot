@@ -75,6 +75,20 @@ h1, h2, h3, h4, .serif {
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
+/* Chat messages area — always show scrollbar so user knows it's scrollable */
+.chat-scroll {
+  overflow-y: scroll !important;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-light) #f0ebe3;
+}
+.chat-scroll::-webkit-scrollbar { width: 6px; }
+.chat-scroll::-webkit-scrollbar-track { background: rgba(240,235,227,0.6); border-radius: 99px; margin: 8px 0; }
+.chat-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary-light), var(--accent));
+  border-radius: 99px;
+  min-height: 40px;
+}
+
 ::selection { background: rgba(26,107,94,0.18); color: var(--primary-dark); }
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -91,7 +105,6 @@ h1, h2, h3, h4, .serif {
     radial-gradient(ellipse at 80% 60%, rgba(20,184,166,0.06)  0%, transparent 40%),
     radial-gradient(ellipse at 20% 80%, rgba(124,58,237,0.04)  0%, transparent 35%);
   position: relative;
-  overflow: hidden;
 }
 .gradient-mesh::before {
   content: '';
@@ -99,9 +112,7 @@ h1, h2, h3, h4, .serif {
   inset: 0;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   pointer-events: none; opacity: 0.6; z-index: 0;
-}
-
-/* ── Glass Effects ─────────────────────────────────────────────────────────── */
+}/* ── Glass Effects ─────────────────────────────────────────────────────────── */
 .glass {
   background: rgba(255,252,247,0.75);
   backdrop-filter: blur(20px) saturate(200%);

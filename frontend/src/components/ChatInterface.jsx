@@ -168,7 +168,7 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-white/50 font-sans transition-all duration-500">
+    <div className="flex flex-col h-full w-full bg-white/50 font-sans overflow-hidden">
       {/* Header */}
       <header className="bg-gradient-to-r from-primary via-[#1e7a6c] to-[#1a6b5e] p-6 flex justify-between items-center shrink-0 z-10 shadow-lg">
         <div className="flex items-center gap-4">
@@ -211,7 +211,7 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
       </header>
 
       {/* Messages */}
-      <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 gradient-mesh">
+      <main className="flex-1 min-h-0 overflow-y-auto chat-scroll p-4 sm:p-6 space-y-6 gradient-mesh">
         <AnimatePresence>
           {messages.map((msg, idx) => (
             <motion.div
