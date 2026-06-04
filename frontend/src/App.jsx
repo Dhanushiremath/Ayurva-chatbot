@@ -7,15 +7,19 @@ import ActionHub from './components/ActionHub';
 import HospitalMap from './components/HospitalMap';
 import ImageAnalyzer from './components/ImageAnalyzer';
 import { useTranslation } from './i18n/translations';
+import { useKeepAlive } from './hooks/useKeepAlive';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 function App() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [language, setLanguage] = useState('en'); // Add language state here
-  const [activeTab, setActiveTab] = useState('chatbot'); // Tab state: 'chatbot', 'location', 'insights'
+  const [language, setLanguage] = useState('en');
+  const [activeTab, setActiveTab] = useState('chatbot');
   const t = useTranslation(language);
+
+  // Keep Render backend warm — prevents cold start delays
+  useKeepAlive();
 
   useEffect(() => {
     // Check if user is already logged in (from localStorage)

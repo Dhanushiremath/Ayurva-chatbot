@@ -63,9 +63,40 @@ function UploadZone({ onImageSelected, isDragging, setIsDragging }) {
 
   const processFile = (file) => {
     if (!file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onloadend = () => onImageSelected(reader.result, file.name);
-    reader.readAsDataURL(file);
+
+    // Compress image before sending — reduces upload size and AI processing time
+    const MAX_DIM = 900;   // max width or height in px
+    const QUALITY = 0.80;  // JPEG quality
+
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+
+      let { width, height } = img;
+      if (width > MAX_DIM || height > MAX_DIM) {
+        if (width > height) { height = Math.round(height * MAX_DIM / width); width = MAX_DIM; }
+        else                { width = Math.round(width * MAX_DIM / height);  height = MAX_DIM; }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width  = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      const compressed = canvas.toDataURL('image/jpeg', QUALITY);
+      onImageSelected(compressed, file.name);
+    };
+
+    img.onerror = () => {
+      // Fallback: send original if canvas fails
+      URL.revokeObjectURL(objectUrl);
+      const reader = new FileReader();
+      reader.onloadend = () => onImageSelected(reader.result, file.name);
+      reader.readAsDataURL(file);
+    };
+
+    img.src = objectUrl;
   };
 
   const handleDrop = useCallback((e) => {
