@@ -56,6 +56,8 @@ app.use('/api/test', require('./routes/testRoutes'));
 app.use('/api/whatsapp', require('./routes/whatsappWebhook'));
 // Hospital Routes
 app.use('/api/hospitals', require('./routes/hospitalRoutes'));
+// Image Disease Analysis Routes
+app.use('/api/image-analyze', require('./routes/imageAnalyzeRoutes'));
 
 // Start Server
 app.listen(PORT, () => {
