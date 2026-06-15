@@ -458,3 +458,23 @@ h1, h2, h3, h4, .serif {
 .icon-blue   { background: linear-gradient(135deg,#e0f2fe,#bae6fd); color:#0369a1; }
 .icon-pink   { background: linear-gradient(135deg,#fce7f3,#fbcfe8); color:#be185d; }
 .icon-red    { background: linear-gradient(135deg,#fee2e2,#fecaca); color:#b91c1c; }
+
+/* ── App shell — prevent children bleeding outside ─────────────────────────── */
+#root { max-width:100%; margin:0; padding:0; text-align:left; }
+
+.app-shell {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  contain: layout paint;
+}
+
+/* Chat message images — always constrained inside bubble */
+.chat-bubble-user img,
+.chat-bubble-bot  img {
+  max-width: 100% !important;
+  width: auto;
+  height: auto;
+  display: block;
+  border-radius: 0.75rem;
+}

@@ -119,7 +119,7 @@ function App() {
   return (
     <div className="min-h-screen flex items-center justify-center p-0 lg:p-6 auth-bg">
       {user ? (
-        <div className="w-full h-screen lg:h-[95vh] max-w-[1600px] flex flex-col bg-white lg:rounded-[3rem] shadow-[0_40px_100px_rgba(15,74,63,0.18)] overflow-hidden border border-white/60">
+        <div className="app-shell w-full h-screen lg:h-[95vh] max-w-[1600px] flex flex-col bg-white lg:rounded-[3rem] shadow-[0_40px_100px_rgba(15,74,63,0.18)] overflow-hidden border border-white/60">
           {/* Tab Navigation */}
           <div className="tab-bar flex border-b border-slate-200">
             <button

@@ -168,7 +168,7 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-white/50 font-sans overflow-hidden">
+    <div className="flex flex-col h-full w-full bg-white/50 font-sans overflow-hidden relative isolate">
       {/* Header */}
       <header className="bg-gradient-to-r from-primary via-[#1e7a6c] to-[#1a6b5e] p-6 flex justify-between items-center shrink-0 z-10 shadow-lg">
         <div className="flex items-center gap-4">
@@ -211,7 +211,7 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
       </header>
 
       {/* Messages */}
-      <main className="flex-1 min-h-0 overflow-y-auto chat-scroll p-4 sm:p-6 space-y-6 gradient-mesh">
+      <main className="flex-1 min-h-0 overflow-y-auto chat-scroll p-4 sm:p-6 space-y-6 gradient-mesh relative z-0">
         <AnimatePresence>
           {messages.map((msg, idx) => (
             <motion.div
@@ -225,7 +225,7 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
                 <div className={`p-2.5 rounded-2xl shrink-0 shadow-sm ${msg.role === 'user' ? 'bg-secondary' : 'bg-white border border-slate-100'}`}>
                   {msg.role === 'user' ? <User size={18} className="text-white" /> : <LotusIcon size={18} className="text-secondary" />}
                 </div>
-                <div className={`p-4 rounded-2xl ${
+                <div className={`p-4 rounded-2xl overflow-hidden max-w-full ${
                   msg.role === 'user' 
                     ? 'chat-bubble-user text-white rounded-tr-none shadow-indigo-500/10' 
                     : msg.isError 
@@ -236,7 +236,7 @@ const ChatInterface = ({ user, onLogout, onOpenMap, language, onLanguageChange }
                     <img 
                       src={msg.image} 
                       alt="User health upload" 
-                      className="max-w-xs max-h-48 object-cover rounded-xl mb-3 shadow-md border border-white/20"
+                      className="w-full max-w-xs max-h-48 object-cover rounded-xl mb-3 shadow-md border border-white/20 block"
                     />
                   )}
                   <div className="prose prose-sm max-w-none text-inherit leading-relaxed">
